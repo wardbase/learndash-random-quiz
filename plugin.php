@@ -1,7 +1,7 @@
 <?php
 /**
  * @package WardBase_Quiz_Power_Pack
- * @version 1.7.2
+ * @version 1.0.0
  */
 /*
 Plugin Name: LearnDash Random Quiz
@@ -12,8 +12,23 @@ Version: 1.0.0
 Author URI: https://wardbase.com
 */
 
+define('LD_RANDOM_QUIZ_PATH', dirname(__FILE__));
+define('LD_RANDOM_QUIZ_URL', plugins_url('', __FILE__));
+
+require LD_RANDOM_QUIZ_PATH . '/lib/wardbase.php';
+
 function wardbase_random_quiz() {
+    wp_enqueue_style( 'ld-random-quiz-style' );
+    wardbase_enqueue_scripts( 'ld-random-quiz-script' );
+
     return "<h1>Hello World</h1>";
 }
 
 add_shortcode('RandomQuiz', 'wardbase_random_quiz');
+
+function wardbase_random_quiz_enqueue_scripts() {
+    wardbase_load_react_app(LD_RANDOM_QUIZ_PATH . '/app/', LD_RANDOM_QUIZ_URL . '/app/', 'ld-random-quiz', '#ld-random-quiz-app');
+}
+
+add_action( 'wp_enqueue_scripts', 'wardbase_random_quiz_enqueue_scripts' );
+
