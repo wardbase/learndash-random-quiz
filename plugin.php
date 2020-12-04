@@ -21,7 +21,7 @@ function wardbase_random_quiz() {
     wp_enqueue_style( 'ld-random-quiz-style' );
     wardbase_enqueue_scripts( 'ld-random-quiz-script' );
 
-    return "<h1>Hello World</h1>";
+    return '<div id="ld-random-quiz-app"></div>';
 }
 
 add_shortcode('RandomQuiz', 'wardbase_random_quiz');
