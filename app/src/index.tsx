@@ -13,9 +13,6 @@ declare global {
 }
 
 if (window.wpReactPlugin) {
-  console.log(window.wpReactPlugin.appSelector)
-  console.log(document.querySelector(window.wpReactPlugin.appSelector))
-
   ReactDOM.render(
     <React.StrictMode>
       <App />
