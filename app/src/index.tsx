@@ -4,12 +4,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+declare global {
+  interface Window {
+    wpReactPlugin: {
+      appSelector: string
+    } | undefined
+  }
+}
+
+if (window.wpReactPlugin) {
+  console.log(window.wpReactPlugin.appSelector)
+  console.log(document.querySelector(window.wpReactPlugin.appSelector))
+
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.querySelector(window.wpReactPlugin.appSelector)
+  );
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
