@@ -32,3 +32,15 @@ function wardbase_random_quiz_enqueue_scripts() {
 
 add_action( 'wp_enqueue_scripts', 'wardbase_random_quiz_enqueue_scripts' );
 
+function wardbase_random_quiz_rest_api() {
+    register_rest_route( 'random-quiz/v1', '/quiz', array(
+        'methods' => 'GET',
+        'callback' => 'ward_base_get_quiz',
+    ) );
+}
+
+add_action( 'rest_api_init', 'wardbase_random_quiz_rest_api' );
+
+function ward_base_get_quiz() {
+    return "Hello WP API World!";
+}
