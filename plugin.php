@@ -19,6 +19,7 @@ require LD_RANDOM_QUIZ_PATH . '/lib/wardbase.php';
 
 function wardbase_random_quiz() {
     wp_enqueue_style( 'ld-random-quiz-style' );
+    wp_enqueue_script( 'wp-api' );
     wardbase_enqueue_scripts( 'ld-random-quiz-script' );
 
     return '<div id="ld-random-quiz-app"></div>';
