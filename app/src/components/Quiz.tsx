@@ -4,35 +4,43 @@ import React, { useState, useEffect } from 'react';
 import { StartPage } from './StartPage';
 
 type QuizData = string;
+type AppState = 'Start' | 'LoadingQuiz' | 'Quiz' | 'Error';
 
 export default function Quiz() {
   const [error, setError] = useState<Error | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [appState, setAppState] = useState<AppState>('Start');
   const [quiz, setQuiz] = useState<QuizData>('');
 
   useEffect(() => {
-    fetch(`${window.wpApiSettings.root}random-quiz/v1/quiz`)
+    if (appState === 'LoadingQuiz') {
+      fetch(`${window.wpApiSettings.root}random-quiz/v1/quiz`)
       // .then(res => res.json())
       .then(res => res.text())
       .then(
         (result) => {
-          setIsLoaded(true);
+          setAppState('Quiz')
           setQuiz(result);
         },
         (error) => {
-          setIsLoaded(true);
+          setAppState('Error')
           setError(error);
         }
       )
-  }, [])
+    }
+  }, [appState])
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <StartPage />
-    );
+  const loadQuiz = () => {
+    setAppState('LoadingQuiz');
+  }
+
+  switch(appState) {
+    case 'Start':
+      return <StartPage loadQuiz={loadQuiz}/>
+    case 'LoadingQuiz':
+      return <div>Loading...</div>;
+    case 'Quiz':
+      return <div>{quiz}</div>
+    case 'Error':
+      return <div>Error: {error!.message}</div>;  
   }
 }
