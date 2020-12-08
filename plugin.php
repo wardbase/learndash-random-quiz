@@ -47,8 +47,11 @@ function ward_base_get_quiz() {
 
     $sql_str = $wpdb->prepare( 'SELECT * from '. LDLMS_DB::get_table_name('quiz_question') );
     $questions = $wpdb->get_results($sql_str);
+    $questions = maybe_unserialize($questions);
 
-    var_dump(json_encode( maybe_unserialize($questions)));
+    for($i = 0; $i < count($questions); $i++) {
+        $questions[$i]->answer_data = null;
+    }
 
-    return "Hello WP API World!";
+    return json_encode( $questions );
 }

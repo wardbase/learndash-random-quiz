@@ -14,8 +14,7 @@ export default function Quiz() {
   useEffect(() => {
     if (appState === 'LoadingQuiz') {
       fetch(`${window.wpApiSettings.root}random-quiz/v1/quiz`)
-      // .then(res => res.json())
-      .then(res => res.text())
+      .then(res => res.json())
       .then(
         (result) => {
           setAppState('Quiz')
