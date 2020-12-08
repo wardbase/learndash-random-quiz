@@ -1,6 +1,7 @@
-/// <reference path="./wp-api.d.ts" />
+/// <reference path="../wp-api.d.ts" />
 
 import React, { useState, useEffect } from 'react';
+import { StartPage } from './StartPage';
 
 type QuizData = string;
 
@@ -31,7 +32,7 @@ export default function Quiz() {
     return <div>Loading...</div>;
   } else {
     return (
-      <div>{quiz}</div>
+      <StartPage />
     );
   }
 }

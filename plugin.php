@@ -43,5 +43,12 @@ function wardbase_random_quiz_rest_api() {
 add_action( 'rest_api_init', 'wardbase_random_quiz_rest_api' );
 
 function ward_base_get_quiz() {
+    global $wpdb;
+
+    $sql_str = $wpdb->prepare( 'SELECT * from '. LDLMS_DB::get_table_name('quiz_question') );
+    $questions = $wpdb->get_results($sql_str);
+
+    var_dump(json_encode( maybe_unserialize($questions)));
+
     return "Hello WP API World!";
 }
