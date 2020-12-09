@@ -75,8 +75,12 @@ function ward_base_get_quiz() {
         $questions = $wpdb->get_results($sql_str);
         $questions = maybe_unserialize($questions);
 
-        // Decode answer_data.
+        // Manipulate results for rendering in React app.
         for($i = 0; $i < count($questions); $i++) {
+            // autop question
+            $questions[$i]->question = wpautop($questions[$i]->question);
+
+            // Decode answer_data.
             $answer_data = maybe_unserialize($questions[$i]->answer_data);
             $answer_data_array = array();
 
@@ -93,7 +97,7 @@ function ward_base_get_quiz() {
             $questions[$i]->answer_data = $answer_data_array;
         }
 
-        return json_encode($questions);
+        return $questions;
     } else {
         // Send empty array when there is no published questions.
         return array();
