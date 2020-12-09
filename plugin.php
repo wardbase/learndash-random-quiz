@@ -45,13 +45,57 @@ add_action( 'rest_api_init', 'wardbase_random_quiz_rest_api' );
 function ward_base_get_quiz() {
     global $wpdb;
 
-    $sql_str = $wpdb->prepare( 'SELECT * from '. LDLMS_DB::get_table_name('quiz_question') );
-    $questions = $wpdb->get_results($sql_str);
-    $questions = maybe_unserialize($questions);
+    // Extract published questions.
+    $sql_str = $wpdb->prepare( 
+        "SELECT m.meta_value FROM {$wpdb->prefix}postmeta AS m
+        INNER JOIN {$wpdb->prefix}posts AS p ON p.ID = m.post_id
+        WHERE p.post_status='publish' AND m.meta_key='question_pro_id'"
+    );
 
-    for($i = 0; $i < count($questions); $i++) {
-        $questions[$i]->answer_data = null;
+    $ids = $wpdb->get_results($sql_str);
+
+    if (count($ids) > 0) {
+        // Generate array string like ('3', '4') for where ... in syntax.
+        $ids_str = '(';
+    
+        for ($i = 0; $i < count($ids); $i++) {
+            $ids_str .= "'" . $ids[$i]->meta_value . "'";
+    
+            if ($i !== count($ids) - 1) {
+                $ids_str .= ',';
+            }
+        }
+    
+        $ids_str .= ')';
+    
+        // Query data.
+        $tableQuestion = LDLMS_DB::get_table_name('quiz_question');
+        $sql_str = $wpdb->prepare("SELECT * FROM {$tableQuestion} WHERE id IN {$ids_str}");
+    
+        $questions = $wpdb->get_results($sql_str);
+        $questions = maybe_unserialize($questions);
+
+        // Decode answer_data.
+        for($i = 0; $i < count($questions); $i++) {
+            $answer_data = maybe_unserialize($questions[$i]->answer_data);
+            $answer_data_array = array();
+
+            foreach($answer_data as $answer_choice) {
+                if ($answer_choice->isHtml()) {
+                    $answer_data_array[] = array(
+                        'html' => $answer_choice->getAnswer(),
+                    );
+                } else {
+                    $answer_data_array[] = $answer_choice->getAnswer();
+                }
+            }
+
+            $questions[$i]->answer_data = $answer_data_array;
+        }
+
+        return json_encode($questions);
+    } else {
+        // Send empty array when there is no published questions.
+        return array();
     }
-
-    return json_encode( $questions );
 }
