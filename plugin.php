@@ -38,6 +38,11 @@ function wardbase_random_quiz_rest_api() {
         'methods' => 'GET',
         'callback' => 'ward_base_get_quiz',
     ) );
+
+    register_rest_route( 'random-quiz/v1', '/quiz/answers', array(
+        'methods' => 'POST',
+        'callback' => 'ward_base_check_answers',
+    ) );
 }
 
 add_action( 'rest_api_init', 'wardbase_random_quiz_rest_api' );
@@ -102,4 +107,8 @@ function ward_base_get_quiz() {
         // Send empty array when there is no published questions.
         return array();
     }
+}
+
+function ward_base_check_answers(WP_REST_Request $request) {
+    return var_dump($request->get_body());
 }
