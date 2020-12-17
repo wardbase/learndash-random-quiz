@@ -36,18 +36,18 @@ add_action( 'wp_enqueue_scripts', 'wardbase_random_quiz_enqueue_scripts' );
 function wardbase_random_quiz_rest_api() {
     register_rest_route( 'random-quiz/v1', '/quiz', array(
         'methods' => 'GET',
-        'callback' => 'ward_base_get_quiz',
+        'callback' => 'wardbase_get_quiz',
     ) );
 
     register_rest_route( 'random-quiz/v1', '/quiz/answers', array(
         'methods' => 'POST',
-        'callback' => 'ward_base_check_answers',
+        'callback' => 'wardbase_check_answers',
     ) );
 }
 
 add_action( 'rest_api_init', 'wardbase_random_quiz_rest_api' );
 
-function ward_base_get_quiz() {
+function wardbase_get_quiz() {
     global $wpdb;
 
     // Extract published questions.
@@ -58,27 +58,10 @@ function ward_base_get_quiz() {
     );
 
     $ids = $wpdb->get_results($sql_str);
+    $ids = array_map(function($id) { return $id->meta_value; }, $ids);
 
     if (count($ids) > 0) {
-        // Generate array string like ('3', '4') for where ... in syntax.
-        $ids_str = '(';
-    
-        for ($i = 0; $i < count($ids); $i++) {
-            $ids_str .= "'" . $ids[$i]->meta_value . "'";
-    
-            if ($i !== count($ids) - 1) {
-                $ids_str .= ',';
-            }
-        }
-    
-        $ids_str .= ')';
-    
-        // Query data.
-        $tableQuestion = LDLMS_DB::get_table_name('quiz_question');
-        $sql_str = $wpdb->prepare("SELECT * FROM {$tableQuestion} WHERE id IN {$ids_str}");
-    
-        $questions = $wpdb->get_results($sql_str);
-        $questions = maybe_unserialize($questions);
+        $questions = get_questions($ids);
 
         // Manipulate results for rendering in React app.
         for($i = 0; $i < count($questions); $i++) {
@@ -109,6 +92,62 @@ function ward_base_get_quiz() {
     }
 }
 
-function ward_base_check_answers(WP_REST_Request $request) {
-    return var_dump($request->get_body());
+function wardbase_check_answers(WP_REST_Request $request) {
+    $answers = json_decode($request->get_body(), true);
+    $ids = array_keys($answers);
+
+    $questions = get_questions($ids);
+    
+    $correct_number = 0;
+    $total_point = 0;
+    $user_point = 0;
+    $result = array();
+
+    // Manipulate results for rendering in React app.
+    foreach($questions as $q) {
+        // Decode answer_data.
+        $answer_data = maybe_unserialize($q->answer_data);
+        $total_point += $q->points;
+
+        if ($answer_data[$answers[$q->id]]->isCorrect()) {
+            $user_point += $q->points;
+            $correct_number++;
+            $result[$q->id] = true;
+        } else {
+            $result[$q->id] = false;
+        }
+    }
+
+    return array(
+        'correctNumber' => $correct_number,
+        'totalPoint' => $total_point,
+        'userPoint' => $user_point,
+        'result' => $result,
+    );
+}
+
+function get_questions(array $ids) {
+    global $wpdb;
+
+    // Generate array string like ('3', '4') for where ... in syntax.
+    $ids_str = '(';
+    
+    for ($i = 0; $i < count($ids); $i++) {
+        $ids_str .= "'" . $ids[$i] . "'";
+
+        if ($i !== count($ids) - 1) {
+            $ids_str .= ',';
+        }
+    }
+
+    $ids_str .= ')';
+
+    // Query data.
+    $tableQuestion = LDLMS_DB::get_table_name('quiz_question');
+    $sql_str = $wpdb->prepare("SELECT * FROM {$tableQuestion} WHERE id IN {$ids_str}");
+
+    $questions = $wpdb->get_results($sql_str);
+    $questions = maybe_unserialize($questions);
+
+    return $questions;
 }

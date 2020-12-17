@@ -2,8 +2,9 @@
 
 import React, { useEffect, useReducer } from 'react';
 import { StartPage } from './StartPage';
-import { QuizData, UserAnswers } from './questions';
+import { QuizData, QuizResult, UserAnswers } from './questions';
 import { Quiz } from './Quiz';
+import { ResultPage } from './ResultPage';
 
 type AppState = 'Start' | 'LoadingQuiz' | 'Quiz' | 'Submitting' | 'ShowResult' | 'Error';
 type Action = {
@@ -26,7 +27,7 @@ type State = {
   state: AppState
   quiz: QuizData | null
   answers: UserAnswers
-  result: any
+  result: QuizResult | null
   error?: Error
 }
 
@@ -66,7 +67,7 @@ export function QuizApp() {
     state: 'Start',
     quiz: null,
     answers: {},
-    result: {}
+    result: null,
   })
 
   useEffect(() => {
@@ -92,8 +93,8 @@ export function QuizApp() {
         method: 'post',
         body: JSON.stringify(answers),
       })
-      //.then(res => res.json())
-      .then(res => res.text())
+      .then(res => res.json())
+      //.then(res => res.text())
       .then(
         (result) => {
           dispatch({
@@ -128,7 +129,7 @@ export function QuizApp() {
       return <div>Submitting answers...</div>
     case 'ShowResult':
       console.log(result)
-      return <div>Result: {}</div>
+      return <ResultPage result={result!} questionCount={quiz!.length} />
     case 'Error':
       return <div>Error: {error && error.message}</div>;  
   }
