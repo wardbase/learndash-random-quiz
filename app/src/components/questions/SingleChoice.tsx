@@ -1,5 +1,5 @@
 import React from 'react';
-import { SetUserAnswer } from './common-types'
+import { QuestionResult, SetUserAnswer } from './common-types'
 
 type AnswerChoice = string | { html: string }
 
@@ -13,12 +13,14 @@ export interface SingleChoiceQuestion {
 
 interface SingleChoiceProps {
   question: SingleChoiceQuestion
-  setUserAnswer: SetUserAnswer
+  setUserAnswer: SetUserAnswer | null
+  result: QuestionResult | null
 }
 
 export const SingleChoice = ({ 
   question: { id, title, question, answer_data },
-  setUserAnswer
+  setUserAnswer,
+  result,
 }: SingleChoiceProps) => {
   return (
     <div className="wpProQuiz_question">
@@ -26,13 +28,42 @@ export const SingleChoice = ({
       <p className="wpProQuiz_clear" style={{clear:'both'}}></p>
       <ul className="wpProQuiz_questionList">
         {answer_data.map((choice, i) => {
+          let className = "wpProQuiz_questionListItem";
+
+          if (result) {
+            if (`${i}` === result.userChoice) {
+              if (`${i}` === result.correct) {
+                className += " wpProQuiz_answerCorrect";
+              } else {
+                className += " wpProQuiz_answerIncorrect";
+              }
+            } else if (`${i}` === result.correct) {
+              className += " wpProQuiz_answerCorrectIncomplete";
+            }
+          }
+
           return (
-            <li key={`${id}-${i}`} className="wpProQuiz_questionListItem">
+            <li key={`${id}-${i}`} className={className}>
               <span style={{display:'none'}}>{i}. </span>
                 <label>
-                  <input className="wpProQuiz_questionInput" type="radio" value={i} onClick={() => {
-                    setUserAnswer(`${id}`, `${i}`)
-                  }} />
+                  {
+                    setUserAnswer
+                    ? <input 
+                        className="wpProQuiz_questionInput"
+                        type="radio"
+                        value={i}
+                        onClick={() => {
+                          setUserAnswer(`${id}`, `${i}`)
+                        }} 
+                      />
+                    : <input 
+                        className="wpProQuiz_questionInput"
+                        type="radio"
+                        value={i}
+                        disabled={true}
+                        checked={`${i}` === result!.userChoice}
+                      />
+                  }
                   {typeof(choice) === 'string' ? choice : choice.html}
                 </label>
             </li>

@@ -10,5 +10,9 @@ export type QuizResult = {
   correctNumber: number
   totalPoint: number
   userPoint: number
-  result: Record<QuestionId, boolean>
+  result: Record<QuestionId, number | string>
+}
+export type QuestionResult = {
+  userChoice: number | string
+  correct: number | string
 }

@@ -112,9 +112,13 @@ function wardbase_check_answers(WP_REST_Request $request) {
         if ($answer_data[$answers[$q->id]]->isCorrect()) {
             $user_point += $q->points;
             $correct_number++;
-            $result[$q->id] = true;
+            $result[$q->id] = $answers[$q->id];
         } else {
-            $result[$q->id] = false;
+            foreach($answer_data as $i => $a) {
+                if ($a->isCorrect()) {
+                    $result[$q->id] = '' . $i;
+                }
+            }
         }
     }
 

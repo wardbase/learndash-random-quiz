@@ -94,7 +94,6 @@ export function QuizApp() {
         body: JSON.stringify(answers),
       })
       .then(res => res.json())
-      //.then(res => res.text())
       .then(
         (result) => {
           dispatch({
@@ -128,8 +127,14 @@ export function QuizApp() {
     case 'Submitting':
       return <div>Submitting answers...</div>
     case 'ShowResult':
-      console.log(result)
-      return <ResultPage result={result!} questionCount={quiz!.length} />
+      return (
+        <ResultPage 
+          result={result!}
+          questionCount={quiz!.length}
+          quiz={quiz!}
+          answers={answers}
+        />
+      )
     case 'Error':
       return <div>Error: {error && error.message}</div>;  
   }
