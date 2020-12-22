@@ -133,6 +133,7 @@ export function QuizApp() {
           questionCount={quiz!.length}
           quiz={quiz!}
           answers={answers}
+          loadQuiz={loadQuiz}
         />
       )
     case 'Error':

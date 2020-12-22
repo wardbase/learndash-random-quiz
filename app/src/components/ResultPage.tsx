@@ -7,6 +7,7 @@ interface ResultPageProps {
   quiz: QuizData
   questionCount: number
   answers: UserAnswers
+  loadQuiz: () => void
 }
 
 export const ResultPage = ({
@@ -14,6 +15,7 @@ export const ResultPage = ({
   questionCount,
   quiz,
   answers,
+  loadQuiz,
 }: ResultPageProps) => {
   const [viewQuestions, setViewQuestions] = useState(false);
 
@@ -27,7 +29,9 @@ export const ResultPage = ({
           <input className="wpProQuiz_button wpProQuiz_button_reShowQuestion" type="button" name="reShowQuestion" value="View Questions" onClick={() => {
             setViewQuestions(!viewQuestions);
           }} />
-          <input className="wpProQuiz_button wpProQuiz_button_restartQuiz" type="button" name="restartQuiz" value="Restart Quiz" />
+          <input className="wpProQuiz_button wpProQuiz_button_restartQuiz" type="button" name="restartQuiz" value="Restart Quiz" onClick={() => {
+            loadQuiz();
+          }} />
         </div>
       </div>
       {viewQuestions && (
