@@ -53,8 +53,10 @@ function wardbase_get_quiz() {
     // Extract published questions.
     $sql_str = $wpdb->prepare( 
         "SELECT m.meta_value FROM {$wpdb->prefix}postmeta AS m
-        INNER JOIN {$wpdb->prefix}posts AS p ON p.ID = m.post_id
-        WHERE p.post_status='publish' AND m.meta_key='question_pro_id'"
+        INNER JOIN 
+            (SELECT ID FROM {$wpdb->prefix}posts as posts WHERE posts.post_status='publish' and posts.post_type='sfwd-question' ORDER BY rand() LIMIT 20) AS p 
+            ON p.ID = m.post_id
+        WHERE m.meta_key='question_pro_id'"
     );
 
     $ids = $wpdb->get_results($sql_str);
@@ -134,8 +136,6 @@ function get_questions(array $ids) {
     global $wpdb;
 
     // Generate array string like ('3', '4') for where ... in syntax.
-    $ids_str = '(';
-    
     for ($i = 0; $i < count($ids); $i++) {
         $ids_str .= "'" . $ids[$i] . "'";
 
@@ -144,11 +144,9 @@ function get_questions(array $ids) {
         }
     }
 
-    $ids_str .= ')';
-
     // Query data.
     $tableQuestion = LDLMS_DB::get_table_name('quiz_question');
-    $sql_str = $wpdb->prepare("SELECT * FROM {$tableQuestion} WHERE id IN {$ids_str}");
+    $sql_str = $wpdb->prepare("SELECT * FROM {$tableQuestion} WHERE id IN ({$ids_str}) ORDER BY FIELD(id, {$ids_str})");
 
     $questions = $wpdb->get_results($sql_str);
     $questions = maybe_unserialize($questions);
