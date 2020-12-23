@@ -47,13 +47,13 @@ export const MultipleChoice = ({
           let className = "wpProQuiz_questionListItem";
 
           if (result) {
-            if (`${i}` === result.userChoice) {
-              if (`${i}` === result.correct) {
+            if (result.userChoice.includes(`${i}`)) {
+              if (result.correct.includes(`${i}`)) {
                 className += " wpProQuiz_answerCorrect";
               } else {
                 className += " wpProQuiz_answerIncorrect";
               }
-            } else if (`${i}` === result.correct) {
+            } else if (result.correct.includes(`${i}`)) {
               className += " wpProQuiz_answerCorrectIncomplete";
             }
           }
@@ -81,7 +81,7 @@ export const MultipleChoice = ({
                         type="checkbox"
                         value={i}
                         disabled={true}
-                        checked={`${i}` === result!.userChoice}
+                        checked={result!.userChoice.includes(`${i}`)}
                       />
                   }
                   {typeof(choice) === 'string' ? choice : choice.html}

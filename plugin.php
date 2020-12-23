@@ -111,14 +111,45 @@ function wardbase_check_answers(WP_REST_Request $request) {
         $answer_data = maybe_unserialize($q->answer_data);
         $total_point += $q->points;
 
-        if ($answer_data[$answers[$q->id]]->isCorrect()) {
-            $user_point += $q->points;
-            $correct_number++;
-            $result[$q->id] = $answers[$q->id];
-        } else {
+        if ($q->answer_type === 'single') {
+            if ($answer_data[$answers[$q->id]]->isCorrect()) {
+                $user_point += $q->points;
+                $correct_number++;
+                $result[$q->id] = $answers[$q->id];
+            } else {
+                foreach($answer_data as $i => $a) {
+                    if ($a->isCorrect()) {
+                        $result[$q->id] = '' . $i;
+                    }
+                }
+            }
+        } else if ($q->answer_type === 'multiple') {
+            $correctAnswers = array();
+            $is_correct = true;
+
             foreach($answer_data as $i => $a) {
                 if ($a->isCorrect()) {
-                    $result[$q->id] = '' . $i;
+                    $correctAnswers[] = '' . $i;
+
+                    if (in_array($i, $answers[$q->id])) {
+                        if ($q->answer_points_activated) {
+                            $user_point += $a->getPoints();
+                        }
+                    }
+                } else {
+                    if (in_array($i, $answers[$q->id])) {
+                        $is_correct = false;
+                        $user_point -= $a->getPoints();
+                    }
+                }
+            }
+
+            $result[$q->id] = $correctAnswers;
+            
+            if ($is_correct) {
+                $correct_number++;
+                if (!$q->answer_points_activated) {
+                    $user_point += $q->points;
                 }
             }
         }
