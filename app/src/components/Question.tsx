@@ -1,5 +1,5 @@
 import React from 'react';
-import { MultipleChoice, Question as QuestionType, QuestionResult, SetUserAnswer, SingleChoice } from './questions';
+import { FreeChoice, MultipleChoice, Question as QuestionType, QuestionResult, SetUserAnswer, SingleChoice } from './questions';
 
 type QuestionProps = {
   question: QuestionType
@@ -13,5 +13,7 @@ export const Question = ({ question, setUserAnswer, result }: QuestionProps) => 
       return <SingleChoice question={question} setUserAnswer={setUserAnswer} result={result}/>
     case 'multiple':
       return <MultipleChoice question={question} setUserAnswer={setUserAnswer} result={result}/>
+    case 'free_answer':
+      return <FreeChoice question={question} setUserAnswer={setUserAnswer} result={result}/>
   }
 }
