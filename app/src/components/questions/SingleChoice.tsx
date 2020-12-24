@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { QuestionResult, SetUserAnswer } from './common-types'
 
 type AnswerChoice = string | { html: string }
@@ -22,6 +22,8 @@ export const SingleChoice = ({
   setUserAnswer,
   result,
 }: SingleChoiceProps) => {
+  const [selectedIndex, setSelectedIndex] = useState<number|null>(null);
+
   return (
     <div className="wpProQuiz_question">
       <div className="wpProQuiz_question_text" dangerouslySetInnerHTML={{ __html: question }}/>
@@ -53,8 +55,10 @@ export const SingleChoice = ({
                         type="radio"
                         value={i}
                         onClick={() => {
+                          setSelectedIndex(i)
                           setUserAnswer(`${id}`, `${i}`)
-                        }} 
+                        }}
+                        checked={selectedIndex === i}
                       />
                     : <input 
                         className="wpProQuiz_questionInput"
