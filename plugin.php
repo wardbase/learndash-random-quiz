@@ -124,12 +124,12 @@ function wardbase_check_answers(WP_REST_Request $request) {
                 }
             }
         } else if ($q->answer_type === 'multiple') {
-            $correctAnswers = array();
+            $correct_answers = array();
             $is_correct = true;
 
             foreach($answer_data as $i => $a) {
                 if ($a->isCorrect()) {
-                    $correctAnswers[] = '' . $i;
+                    $correct_answers[] = '' . $i;
 
                     if (in_array($i, $answers[$q->id])) {
                         if ($q->answer_points_activated) {
@@ -144,13 +144,23 @@ function wardbase_check_answers(WP_REST_Request $request) {
                 }
             }
 
-            $result[$q->id] = $correctAnswers;
+            $result[$q->id] = $correct_answers;
             
             if ($is_correct) {
                 $correct_number++;
                 if (!$q->answer_points_activated) {
                     $user_point += $q->points;
                 }
+            }
+        } else if ($q->answer_type === 'free_answer') {
+            $correct_answers = explode("\n", strtolower($answer_data[0]->getAnswer()));
+
+            if (in_array($answers[$q->id], $correct_answers)) {
+                $user_point += $q->points;
+                $correct_number++;
+                $result[$q->id] = true;
+            } else {
+                $result[$q->id] = false;
             }
         }
     }

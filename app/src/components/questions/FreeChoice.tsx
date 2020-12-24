@@ -19,19 +19,38 @@ export const FreeChoice = ({
   setUserAnswer,
   result,
 }: FreeChoiceProps) => {
+  let className = "wpProQuiz_questionListItem";
+
+  if (result) {
+    if (result.correct) {
+      className += " wpProQuiz_answerCorrect";
+    } else {
+      className += " wpProQuiz_answerIncorrect";
+    }
+  }
+
   return (
     <div className="wpProQuiz_question">
       <div className="wpProQuiz_question_text" dangerouslySetInnerHTML={{ __html: question }}/>
       <p className="wpProQuiz_clear" style={{clear:'both'}}></p>
       <ul className="wpProQuiz_questionList">
-        <li className="wpProQuiz_questionListItem" data-pos="0">
+        <li className={className}>
 					<label>
             {
               setUserAnswer
-                ? <input className="wpProQuiz_questionInput" type="text" onChange={(e) => {
-                  setUserAnswer(`${id}`, e.target.value)
-                }} />
-                : null
+                ? <input 
+                    className="wpProQuiz_questionInput" 
+                    type="text" 
+                    onChange={(e) => {
+                      setUserAnswer(`${id}`, e.target.value)
+                    }} 
+                  />
+                : <input
+                    className="wpProQuiz_questionInput"
+                    type="text"
+                    value={result!.userChoice}
+                    disabled={true}
+                  />
             }
 					</label>
         </li>
