@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { DndProvider } from 'react-dnd'
+import MultiBackend from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -15,7 +18,9 @@ declare global {
 if (window.wpReactPlugin) {
   ReactDOM.render(
     <React.StrictMode>
-      <App />
+      <DndProvider backend={MultiBackend as any /* Fix type error. */} options={HTML5toTouch}>
+        <App />
+      </DndProvider>
     </React.StrictMode>,
     document.querySelector(window.wpReactPlugin.appSelector)
   );
