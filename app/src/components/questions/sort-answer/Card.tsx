@@ -13,6 +13,7 @@ export interface CardProps {
   text: AnswerChoice
   index: number
   moveCard: (dragIndex: number, hoverIndex: number) => void
+  result: null | boolean
 }
 
 interface DragItem {
@@ -20,7 +21,7 @@ interface DragItem {
   id: string
   type: string
 }
-export const Card: React.FC<CardProps> = ({ id, text, index, moveCard }) => {
+export const Card: React.FC<CardProps> = ({ id, text, index, moveCard, result }) => {
   const ref = useRef<HTMLLIElement>(null)
   const [, drop] = useDrop({
     accept: ItemTypes.CARD,
@@ -82,9 +83,22 @@ export const Card: React.FC<CardProps> = ({ id, text, index, moveCard }) => {
   })
 
   const opacity = isDragging ? 0 : 1
-  drag(drop(ref))
+  let className = "wpProQuiz_questionListItem"
+
+  if (result === null) {
+    drag(drop(ref))
+
+    className += " ui-sortable-handle"
+  } else {
+    if (result) {
+      className += " wpProQuiz_answerCorrect"
+    } else {
+      className += " wpProQuiz_answerIncorrect"
+    }
+  }
+
   return (
-    <li className="wpProQuiz_questionListItem ui-sortable-handle" ref={ref} style={{ opacity }}>
+    <li className={className} ref={ref} style={{ opacity }}>
       <div className="wpProQuiz_sortable">
         {text}
       </div>

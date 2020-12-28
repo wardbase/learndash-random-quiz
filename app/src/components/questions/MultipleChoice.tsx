@@ -47,13 +47,13 @@ export const MultipleChoice = ({
           let className = "wpProQuiz_questionListItem";
 
           if (result) {
-            if (result.userChoice.includes(`${i}`)) {
-              if (result.correct.includes(`${i}`)) {
+            if (result.userChoice && result.userChoice.includes(`${i}`)) {
+              if (result.correct && result.correct.includes(`${i}`)) {
                 className += " wpProQuiz_answerCorrect";
               } else {
                 className += " wpProQuiz_answerIncorrect";
               }
-            } else if (result.correct.includes(`${i}`)) {
+            } else if (result.correct && result.correct.includes(`${i}`)) {
               className += " wpProQuiz_answerCorrectIncomplete";
             }
           }

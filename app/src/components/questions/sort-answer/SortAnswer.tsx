@@ -40,9 +40,18 @@ export const SortAnswer = ({
       text: data,
     }))
 
-    shuffleArray(data);
+    if (setUserAnswer) {
+      shuffleArray(data);
+      return data;
+    } 
 
-    return data;
+    const userData: Array<CardData> = [];
+
+    (result?.userChoice as string[]).forEach((c: string) => {
+      userData.push(data[parseInt(c)])
+    })
+
+    return userData
   })
 
   const moveCard = useCallback(
@@ -76,6 +85,11 @@ export const SortAnswer = ({
             id={card.id}
             text={card.text}
             moveCard={moveCard}
+            result={
+              setUserAnswer
+                ? null
+                : card.id === i
+            }
           />
         )}
       </ul>
