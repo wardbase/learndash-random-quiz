@@ -155,7 +155,7 @@ function wardbase_check_answers(WP_REST_Request $request) {
         } else if ($q->answer_type === 'free_answer') {
             $correct_answers = explode("\n", strtolower($answer_data[0]->getAnswer()));
 
-            if (in_array($answers[$q->id], $correct_answers)) {
+            if (in_array(strtolower($answers[$q->id]), $correct_answers)) {
                 $user_point += $q->points;
                 $correct_number++;
                 $result[$q->id] = true;
