@@ -48,16 +48,16 @@ export const SortAnswer = ({
   const moveCard = useCallback(
     (dragIndex: number, hoverIndex: number) => {
       const dragCard = cards[dragIndex]
-      setCards(
-        update(cards, {
-          $splice: [
-            [dragIndex, 1],
-            [hoverIndex, 0, dragCard],
-          ],
-        }),
-      )
+      const updatedCards = update(cards, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragCard],
+        ],
+      })
 
-      const ids = cards.map((c) => `${c.id}`);
+      setCards(updatedCards);
+
+      const ids = updatedCards.map((c) => `${c.id}`);
 
       setUserAnswer!(`${id}`, ids);
     },

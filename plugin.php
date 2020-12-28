@@ -162,6 +162,25 @@ function wardbase_check_answers(WP_REST_Request $request) {
             } else {
                 $result[$q->id] = false;
             }
+        } else if ($q->answer_type === 'sort_answer') {
+            $correct = true;
+
+            // Check the length of the user answer and the indices are increasing.
+            if (count($answers[$q->id]) === count($answer_data)) {
+                for($i = 0; $i < count($answer_data); $i++) {
+                    if ('' . $i !== $answers[$q->id][$i]) {
+                        $correct = false;
+                        break;
+                    }
+                }
+            } else {
+                $correct = false;
+            }
+
+            if ($correct) {
+                $user_point += $q->points;
+                $correct_number++;
+            }
         }
     }
 
