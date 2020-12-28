@@ -1,7 +1,7 @@
 import { SingleChoiceQuestion } from './SingleChoice';
 import { MultipleChoiceQuestion } from './MultipleChoice';
 import { FreeChoiceQuestion } from './FreeChoice';
-import { SortAnswerQuestion } from './SortAnswer';
+import { SortAnswerQuestion } from './sort-answer/SortAnswer';
 
 export type QuestionId = string
 export type Answer = string | string[]
@@ -19,3 +19,4 @@ export type QuestionResult = {
   userChoice: Answer
   correct: Answer
 }
+export type AnswerChoice = string | { html: string }
