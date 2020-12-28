@@ -54,7 +54,7 @@ export const SingleChoice = ({
                         className="wpProQuiz_questionInput"
                         type="radio"
                         value={i}
-                        onClick={() => {
+                        onChange={() => {
                           setSelectedIndex(i)
                           setUserAnswer(`${id}`, `${i}`)
                         }}
