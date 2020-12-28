@@ -56,8 +56,12 @@ export const SortAnswer = ({
           ],
         }),
       )
+
+      const ids = cards.map((c) => `${c.id}`);
+
+      setUserAnswer!(`${id}`, ids);
     },
-    [cards],
+    [cards, id, setUserAnswer],
   )
 
   return (
