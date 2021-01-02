@@ -73,6 +73,7 @@ function wardbase_get_quiz() {
             // Decode answer_data.
             $answer_data = maybe_unserialize($questions[$i]->answer_data);
             $answer_data_array = array();
+            $sort_string_array = array();
 
             foreach($answer_data as $answer_choice) {
                 if ($answer_choice->isHtml()) {
@@ -82,9 +83,23 @@ function wardbase_get_quiz() {
                 } else {
                     $answer_data_array[] = $answer_choice->getAnswer();
                 }
+
+                if ($questions[$i]->answer_type === 'matrix_sort_answer') {
+                    if ($answer_choice->isSortStringHtml()) {
+                        $sort_string_array[] = array(
+                            'html' => $answer_choice->getSortString(),
+                        );
+                    } else {
+                        $sort_string_array[] = $answer_choice->getSortString();
+                    }
+                }
             }
 
             $questions[$i]->answer_data = $answer_data_array;
+
+            if ($questions[$i]->answer_type === 'matrix_sort_answer') {
+                $questions[$i]->sort_string = $sort_string_array;
+            }
         }
 
         return $questions;
