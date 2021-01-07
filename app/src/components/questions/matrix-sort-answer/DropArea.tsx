@@ -1,33 +1,28 @@
 import React from 'react'
 import { useDrop } from 'react-dnd'
+import { Choice } from './Choice'
+import { ChoiceState } from './types'
 
 const style: React.CSSProperties = {
-  height: '12rem',
-  width: '12rem',
-  marginRight: '1.5rem',
-  marginBottom: '1.5rem',
-  color: 'white',
-  padding: '1rem',
-  textAlign: 'center',
-  fontSize: '1rem',
-  lineHeight: 'normal',
-  float: 'left',
+  height: '83px',
+  minHeight: '83px',
 }
 
 export interface DropAreaProps {
   accept: string[]
-  lastDroppedItem?: any
   onDrop: (item: any) => void
+  droppedChoice: ChoiceState | null
 }
 
 export const DropArea: React.FC<DropAreaProps> = ({
   accept,
-  lastDroppedItem,
   onDrop,
+  droppedChoice,
 }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept,
     drop: onDrop,
+    canDrop: () => !droppedChoice,
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
@@ -35,22 +30,23 @@ export const DropArea: React.FC<DropAreaProps> = ({
   })
 
   const isActive = isOver && canDrop
-  let backgroundColor = '#222'
+  let backgroundColor = 'inherit' 
   if (isActive) {
-    backgroundColor = 'darkgreen'
-  } else if (canDrop) {
-    backgroundColor = 'darkkhaki'
+    backgroundColor = 'rgb(255,255,194)'
   }
 
   return (
-    <div ref={drop} style={{ ...style, backgroundColor }}>
-      {isActive
-        ? 'Release to drop'
-        : `This DropArea accepts: ${accept.join(', ')}`}
-
-      {lastDroppedItem && (
-        <p>Last dropped: {JSON.stringify(lastDroppedItem)}</p>
-      )}
+    <div 
+      ref={drop}
+      className="wpProQuiz_maxtrixSortCriterion ui-sortable"
+      style={{ ...style, backgroundColor }}>
+      { 
+        droppedChoice && 
+        <Choice 
+          name={droppedChoice.name} 
+          type={droppedChoice.type}
+        />
+      }
     </div>
   )
 }
