@@ -84,27 +84,13 @@ export const MatrixSortAnswer = ({
 
       <ul className="wpProQuiz_questionList">
         {dropAreas.map(({ title, droppedChoice }, index) => (
-          <li className="wpProQuiz_questionListItem" key={index}>
-            <table>
-              <tbody>
-                <tr className="wpProQuiz_mextrixTr">
-                  <td style={{width: '20%'}}>
-                    <div className="wpProQuiz_maxtrixSortText">
-                      {title}
-                    </div>
-                  </td>
-                  <td style={{width: '80%'}}>
-                    <DropArea
-                      accept={[ItemTypes.AnswerChoice]}
-                      onDrop={(item) => handleDrop(index, item)}
-                      droppedChoice={droppedChoice}
-                      key={index}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </li>
+          <DropArea
+            title={title}
+            accept={[ItemTypes.AnswerChoice]}
+            onDrop={(item) => handleDrop(index, item)}
+            droppedChoice={droppedChoice}
+            key={index}
+          />
         ))}
       </ul>
 
