@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import update from 'immutability-helper'
 import { Card } from './Card'
 import { QuestionResult, SetUserAnswer, AnswerChoice } from '../common-types'
+import { shuffleArray } from '../util';
 
 export interface SortAnswerQuestion {
   answer_type: 'sort_answer'
@@ -22,26 +23,19 @@ interface CardData {
   text: AnswerChoice
 }
 
-function shuffleArray(array: Array<CardData>) {
-  for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
 export const SortAnswer = ({ 
   question: { id, title, question, answer_data },
   setUserAnswer,
   result,
 }: SortAnswerProps) => {
   const [cards, setCards] = useState(() => {
-    const data: Array<CardData> = answer_data.map((data, i) => ({
+    let data: Array<CardData> = answer_data.map((data, i) => ({
       id: i,
       text: data,
     }))
 
     if (setUserAnswer) {
-      shuffleArray(data);
+      data = shuffleArray(data);
       return data;
     } 
 

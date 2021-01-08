@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 
 import { QuestionResult, SetUserAnswer, AnswerChoice } from '../common-types'
+import { shuffleArray } from '../util';
 import { DropArea } from './DropArea'
 import { ChoiceState, ItemTypes } from './types';
 import { UnusedArea } from './UnusedArea';
@@ -37,9 +38,9 @@ export const MatrixSortAnswer = ({
 }: MatrixSortAnswerProps) => {
   const [state, setState] = useState<State>(() => {
     return {
-      unused: sort_string.map(str => {
+      unused: shuffleArray(sort_string.map(str => {
         return { name: str, type: ItemTypes.AnswerChoice }
-      }),
+      })),
       dropAreas: answer_data.map(a => {
         return { title: a, droppedChoice: null }
       }),
