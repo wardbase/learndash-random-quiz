@@ -10,14 +10,14 @@ type QuestionProps = {
 export const Question = ({ question, setUserAnswer, result }: QuestionProps) => {
   switch(question.answer_type) {
     case 'single':
-      return <SingleChoice question={question} setUserAnswer={setUserAnswer} result={result}/>
+      return <SingleChoice key={question.id} question={question} setUserAnswer={setUserAnswer} result={result}/>
     case 'multiple':
-      return <MultipleChoice question={question} setUserAnswer={setUserAnswer} result={result}/>
+      return <MultipleChoice key={question.id} question={question} setUserAnswer={setUserAnswer} result={result}/>
     case 'free_answer':
-      return <FreeChoice question={question} setUserAnswer={setUserAnswer} result={result}/>
+      return <FreeChoice key={question.id} question={question} setUserAnswer={setUserAnswer} result={result}/>
     case 'sort_answer':
-      return <SortAnswer question={question} setUserAnswer={setUserAnswer} result={result} />
+      return <SortAnswer key={question.id} question={question} setUserAnswer={setUserAnswer} result={result} />
     case 'matrix_sort_answer':
-      return <MatrixSortAnswer question={question} setUserAnswer={setUserAnswer} result={result} />
+      return <MatrixSortAnswer key={question.id} question={question} setUserAnswer={setUserAnswer} result={result} />
   }
 }
