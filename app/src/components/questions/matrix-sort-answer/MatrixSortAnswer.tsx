@@ -24,6 +24,7 @@ interface MatrixSortAnswerProps {
 interface DropAreaState {
   droppedChoice: ChoiceState | null
   title: AnswerChoice
+  id: string
 }
 
 interface State {
@@ -37,14 +38,37 @@ export const MatrixSortAnswer = ({
   result,
 }: MatrixSortAnswerProps) => {
   const [state, setState] = useState<State>(() => {
-    return {
-      unused: shuffleArray(sort_string.map(str => {
-        return { name: str, type: ItemTypes.AnswerChoice }
-      })),
-      dropAreas: answer_data.map(a => {
-        return { title: a, droppedChoice: null }
+    const initState: State = {
+      unused: sort_string.map((str, i) => {
+        return { name: str, type: ItemTypes.AnswerChoice, id: `${i}` }
+      }),
+      dropAreas: answer_data.map((a, i) => {
+        return { title: a, droppedChoice: null, id: `${i}` }
       }),
     }
+
+    if (setUserAnswer) {
+      initState.unused = shuffleArray(initState.unused);
+
+      return initState
+    }
+
+    const length = result ? result.userChoice.length : 0
+    const removed: number[] = []
+
+    for (let i = 0; i < length; i++) {
+      const userChoice = result!.userChoice[i]
+      if (userChoice !== '') {
+        const parsed = parseInt(userChoice)
+
+        initState.dropAreas[i].droppedChoice = initState.unused[parsed]
+        removed.push(parsed)
+      }
+    }
+
+    initState.unused = initState.unused.filter((_, i) => !removed.includes(i))
+    
+    return initState
   })
 
   const { unused, dropAreas } = state;
@@ -67,8 +91,11 @@ export const MatrixSortAnswer = ({
       }
 
       setState(newState)
+      setUserAnswer!(`${id}`, newState.dropAreas.map((a) => {
+        return a.droppedChoice ? a.droppedChoice.id : ''
+      }))
     }, 
-    [unused, dropAreas]
+    [unused, dropAreas, id, setUserAnswer]
   )
 
   return (
@@ -80,17 +107,23 @@ export const MatrixSortAnswer = ({
         <UnusedArea 
           unused={unused} 
           onDrop={(item) => handleDrop(-1, item)}
+          showResult={!setUserAnswer}
         />
       </div>
 
       <ul className="wpProQuiz_questionList">
-        {dropAreas.map(({ title, droppedChoice }, index) => (
+        {dropAreas.map(({ title, droppedChoice, id }, index) => (
           <DropArea
             title={title}
             accept={[ItemTypes.AnswerChoice]}
             onDrop={(item) => handleDrop(index, item)}
             droppedChoice={droppedChoice}
             key={index}
+            result={
+              setUserAnswer
+              ? null
+              : droppedChoice?.id === `${index}`
+            }
           />
         ))}
       </ul>

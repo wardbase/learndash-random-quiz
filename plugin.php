@@ -177,7 +177,7 @@ function wardbase_check_answers(WP_REST_Request $request) {
             } else {
                 $result[$q->id] = false;
             }
-        } else if ($q->answer_type === 'sort_answer') {
+        } else if ($q->answer_type === 'sort_answer' || $q->answer_type === 'matrix_sort_answer') {
             $correct = true;
 
             // Check the length of the user answer and the indices are increasing.

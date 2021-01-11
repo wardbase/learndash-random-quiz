@@ -7,9 +7,10 @@ import { ChoiceState, ItemTypes } from './types'
 interface UnusedAreaProps {
   unused: Array<ChoiceState>
   onDrop: (item: any) => void
+  showResult: boolean
 }
 
-export const UnusedArea = ({unused, onDrop}: UnusedAreaProps) => {
+export const UnusedArea = ({unused, onDrop, showResult}: UnusedAreaProps) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: [ItemTypes.AnswerChoice],
     drop: onDrop,
@@ -32,17 +33,21 @@ export const UnusedArea = ({unused, onDrop}: UnusedAreaProps) => {
     border = '2px dashed #bbb'
   }
 
+  const dropRef = showResult ? null : drop
+
   return (
     <div 
-      ref={drop}
+      ref={dropRef}
       className="wpProQuiz_sortStringList ui-sortable"
       style={{ backgroundColor, minHeight, border }}
     >
-      {unused.map(({ name, type }, index) => (
+      {unused.map(({ name, type, id }, index) => (
         <Choice
+          id={id}
           name={name}
           type={type}
           key={index}
+          showResult={showResult}
         />
       ))}
     </div>

@@ -5,6 +5,7 @@ export enum ItemTypes {
 }
 
 export interface ChoiceState {
+  id: string
   name: AnswerChoice
   type: string
 }
