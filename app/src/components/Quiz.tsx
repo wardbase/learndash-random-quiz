@@ -9,7 +9,7 @@ type QuizProps = {
 
 function useUserAnswerState(initialState: UserAnswers): [UserAnswers, SetUserAnswer] {
   const [userAnswers, setRawUserAnswer] = useState<UserAnswers>(initialState);
-  const setUserAnswer = (questionId: QuestionId, userAnswer: Answer) => {
+  const setUserAnswer = (questionId: QuestionId, userAnswer: Answer | null) => {
     userAnswers[questionId] = userAnswer;
     setRawUserAnswer(userAnswers);
   }
@@ -20,15 +20,23 @@ function useUserAnswerState(initialState: UserAnswers): [UserAnswers, SetUserAns
 export const Quiz = ({ quiz, sendAnswers }: QuizProps) => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswer] = useUserAnswerState({});
+  const question = quiz[questionIndex]
+  const setNullAnswer = () => {
+    if (userAnswers[question.id] === undefined) {
+      setUserAnswer(`${question.id}`, null);
+    }
+  }
 
   return (
     <>
-      <Question question={quiz[questionIndex]} setUserAnswer={setUserAnswer} result={null} />
+      <Question question={question} setUserAnswer={setUserAnswer} result={null} />
       { questionIndex !== quiz.length - 1 
         ? <input type="button" name="next" value="Next" className="wpProQuiz_button wpProQuiz_QuestionButton" onClick={() => {
+            setNullAnswer()
             setQuestionIndex(questionIndex + 1)
           }} />
         : <input type="button" name="next" value="Finish Quiz" className="wpProQuiz_button wpProQuiz_QuestionButton" onClick={() => {
+          setNullAnswer()
           sendAnswers(userAnswers)
         }}/>
       }

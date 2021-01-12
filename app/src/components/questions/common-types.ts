@@ -5,7 +5,7 @@ import { SortAnswerQuestion } from './sort-answer/SortAnswer';
 import { MatrixSortAnswerQuestion } from './matrix-sort-answer/MatrixSortAnswer';
 
 export type QuestionId = string
-export type Answer = string | string[]
+export type Answer = string | string[] | null
 export type UserAnswers = Record<QuestionId, Answer>
 export type SetUserAnswer = (questionId: QuestionId, userAnswer: Answer) => void
 export type Question = 

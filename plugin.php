@@ -130,6 +130,29 @@ function wardbase_check_answers(WP_REST_Request $request) {
         $answer_data = maybe_unserialize($q->answer_data);
         $total_point += $q->points;
 
+        // Send answers when the question is not answered
+        if ($answers[$q->id] === null) {
+            if ($q->answer_type === 'single') {
+                foreach($answer_data as $i => $a) {
+                    if ($a->isCorrect()) {
+                        $result[$q->id] = '' . $i;
+                    }
+                }
+            } else if ($q->answer_type === 'multiple') {
+                foreach($answer_data as $i => $a) {
+                    if ($a->isCorrect()) {
+                        $correct_answers[] = '' . $i;
+                    }
+                }
+                
+                $result[$q->id] = $correct_answers;
+            } else if ($q->answer_type === 'free_answer') {
+                $result[$q->id] = false;
+            }
+
+            continue;
+        }
+
         if ($q->answer_type === 'single') {
             if ($answer_data[$answers[$q->id]]->isCorrect()) {
                 $user_point += $q->points;

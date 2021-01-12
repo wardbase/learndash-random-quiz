@@ -81,7 +81,7 @@ export const MultipleChoice = ({
                         type="checkbox"
                         value={i}
                         disabled={true}
-                        checked={result!.userChoice.includes(`${i}`)}
+                        checked={result!.userChoice?.includes(`${i}`)}
                       />
                   }
                   {typeof(choice) === 'string' ? choice : choice.html}
