@@ -54,9 +54,13 @@ function wardbase_get_quiz() {
     $sql_str = $wpdb->prepare( 
         "SELECT m.meta_value FROM {$wpdb->prefix}postmeta AS m
         INNER JOIN 
-            (SELECT ID FROM {$wpdb->prefix}posts as posts WHERE posts.post_status='publish' and posts.post_type='sfwd-question' ORDER BY rand() LIMIT 20) AS p 
+            (SELECT ID FROM {$wpdb->prefix}posts as posts WHERE posts.post_status='publish' and posts.post_type='sfwd-question' ORDER BY rand()) AS p 
             ON p.ID = m.post_id
-        WHERE m.meta_key='question_pro_id'"
+        INNER JOIN
+        (SELECT id FROM {$wpdb->prefix}learndash_pro_quiz_question AS question WHERE question.answer_type IN ('single', 'multiple', 'free_answer', 'sort_answer', 'matrix_sort_answer')) AS q
+            ON q.id = m.meta_value
+        WHERE m.meta_key='question_pro_id'
+        LIMIT 20"
     );
 
     $ids = $wpdb->get_results($sql_str);
